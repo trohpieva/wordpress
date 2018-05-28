@@ -1,33 +1,23 @@
 <?php
-/**
- * WooCommerce Admin Functions
- *
- * @author   WooThemes
- * @category Core
- * @package  WooCommerce/Admin/Functions
- * @version  2.4.0
- */
+/* работа с бд + вывод */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Выход при непосредственном доступе
 }
 
-/**
- * Get all WooCommerce screen ids.
- *
- * @return array
+/* Получение данных
  */
-function wc_get_screen_ids() {
+function get_screen_ids() {
 
-	$wc_screen_id = sanitize_title( __( 'WooCommerce', 'woocommerce' ) );
+	$screen_id = sanitize_title( __( 'MyNewCatalog', '' ) );
 	$screen_ids   = array(
 		'toplevel_page_' . $wc_screen_id,
-		$wc_screen_id . '_page_wc-reports',
-		$wc_screen_id . '_page_wc-shipping',
-		$wc_screen_id . '_page_wc-settings',
-		$wc_screen_id . '_page_wc-status',
-		$wc_screen_id . '_page_wc-addons',
-		'toplevel_page_wc-reports',
+		$screen_id . '_page_reports',
+		$screen_id . '_page_shipping',
+		$screen_id . '_page_settings',
+		$screen_id . '_page_status',
+		$screen_id . '_page_addons',
+		'toplevel_page_reports',
 		'product_page_product_attributes',
 		'product_page_product_exporter',
 		'product_page_product_importer',
@@ -41,51 +31,44 @@ function wc_get_screen_ids() {
 		'user-edit',
 	);
 
-	foreach ( wc_get_order_types() as $type ) {
+	foreach ( get_order_types() as $type ) {
 		$screen_ids[] = $type;
 		$screen_ids[] = 'edit-' . $type;
 	}
 
-	if ( $attributes = wc_get_attribute_taxonomies() ) {
+	if ( $attributes = get_attribute_taxonomies() ) {
 		foreach ( $attributes as $attribute ) {
-			$screen_ids[] = 'edit-' . wc_attribute_taxonomy_name( $attribute->attribute_name );
+			$screen_ids[] = 'edit-' . attribute_taxonomy_name( $attribute->attribute_name );
 		}
 	}
 
-	return apply_filters( 'woocommerce_screen_ids', $screen_ids );
+	return apply_filters( '', $screen_ids );
 }
 
 /**
- * Create a page and store the ID in an option.
- *
- * @param mixed $slug Slug for the new page
- * @param string $option Option name to store the page's ID
- * @param string $page_title (default: '') Title for the new page
- * @param string $page_content (default: '') Content for the new page
- * @param int $post_parent (default: 0) Parent for the new page
- * @return int page ID
+ * Создание страницы и сохранение ID в опциях
  */
-function wc_create_page( $slug, $option = '', $page_title = '', $page_content = '', $post_parent = 0 ) {
+function create_page( $slug, $option = '', $page_title = '', $page_content = '', $post_parent = 0 ) {
 	global $wpdb;
 
 	$option_value     = get_option( $option );
 
 	if ( $option_value > 0 && ( $page_object = get_post( $option_value ) ) ) {
 		if ( 'page' === $page_object->post_type && ! in_array( $page_object->post_status, array( 'pending', 'trash', 'future', 'auto-draft' ) ) ) {
-			// Valid page is already in place
+			// Действительная страница уже находится на месте
 			return $page_object->ID;
 		}
 	}
 
 	if ( strlen( $page_content ) > 0 ) {
-		// Search for an existing page with the specified page content (typically a shortcode)
+		// Ищет существующую страницу с указанным содержанием страницы (как правило, shortcode)
 		$valid_page_found = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type='page' AND post_status NOT IN ( 'pending', 'trash', 'future', 'auto-draft' ) AND post_content LIKE %s LIMIT 1;", "%{$page_content}%" ) );
 	} else {
-		// Search for an existing page with the specified page slug
+		//Ищет существующую страницу с указанным slug страницы
 		$valid_page_found = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type='page' AND post_status NOT IN ( 'pending', 'trash', 'future', 'auto-draft' )  AND post_name = %s LIMIT 1;", $slug ) );
 	}
 
-	$valid_page_found = apply_filters( 'woocommerce_create_page_id', $valid_page_found, $slug, $page_content );
+	$valid_page_found = apply_filters( 'create_page_id', $valid_page_found, $slug, $page_content );
 
 	if ( $valid_page_found ) {
 		if ( $option ) {
@@ -94,12 +77,12 @@ function wc_create_page( $slug, $option = '', $page_title = '', $page_content = 
 		return $valid_page_found;
 	}
 
-	// Search for a matching valid trashed page
+	// Поиск подходящей действительной страницы
 	if ( strlen( $page_content ) > 0 ) {
-		// Search for an existing page with the specified page content (typically a shortcode)
+		// Поиск существующей страницы с указанным содержимым страницы (обычно это шорткод)
 		$trashed_page_found = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type='page' AND post_status = 'trash' AND post_content LIKE %s LIMIT 1;", "%{$page_content}%" ) );
 	} else {
-		// Search for an existing page with the specified page slug
+		// Поиск существующей страницы с указанным slug страниц
 		$trashed_page_found = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_type='page' AND post_status = 'trash' AND post_name = %s LIMIT 1;", $slug ) );
 	}
 
@@ -131,65 +114,50 @@ function wc_create_page( $slug, $option = '', $page_title = '', $page_content = 
 	return $page_id;
 }
 
-/**
- * Output admin fields.
- *
- * Loops though the woocommerce options array and outputs each field.
- *
- * @param array $options Opens array to output
+/*
+  Выходные данные поля администратора.
  */
-function woocommerce_admin_fields( $options ) {
+function admin_fields( $options ) {
 
-	if ( ! class_exists( 'WC_Admin_Settings', false ) ) {
-		include( dirname( __FILE__ ) . '/class-wc-admin-settings.php' );
+	if ( ! class_exists( 'Admin_Settings', false ) ) {
+		include( dirname( __FILE__ ) . '/class-admin-settings.php' );
 	}
 
-	WC_Admin_Settings::output_fields( $options );
+	Admin_Settings::output_fields( $options );
 }
 
-/**
- * Update all settings which are passed.
- *
- * @param array $options
- * @param array $data
+/*
+  Обновить все переданные настройки.
  */
-function woocommerce_update_options( $options, $data = null ) {
+function update_options( $options, $data = null ) {
 
-	if ( ! class_exists( 'WC_Admin_Settings', false ) ) {
-		include( dirname( __FILE__ ) . '/class-wc-admin-settings.php' );
+	if ( ! class_exists( 'Admin_Settings', false ) ) {
+		include( dirname( __FILE__ ) . '/class-admin-settings.php' );
 	}
 
-	WC_Admin_Settings::save_fields( $options, $data );
+	Admin_Settings::save_fields( $options, $data );
 }
 
-/**
- * Get a setting from the settings API.
- *
- * @param mixed $option_name
- * @param mixed $default
- * @return string
+/*
+  Получить настройку из API настроек.
  */
-function woocommerce_settings_get_option( $option_name, $default = '' ) {
+function settings_get_option( $option_name, $default = '' ) {
 
-	if ( ! class_exists( 'WC_Admin_Settings', false ) ) {
-		include( dirname( __FILE__ ) . '/class-wc-admin-settings.php' );
+	if ( ! class_exists( 'Admin_Settings', false ) ) {
+		include( dirname( __FILE__ ) . '/class-admin-settings.php' );
 	}
 
-	return WC_Admin_Settings::get_option( $option_name, $default );
+	return Admin_Settings::get_option( $option_name, $default );
 }
 
-/**
- * Save order items. Uses the CRUD.
- *
- * @since 2.2
- * @param int $order_id Order ID
- * @param array $items Order items to save
+/*
+  Сохранить элементы. Используем CRUD.
  */
-function wc_save_order_items( $order_id, $items ) {
-	// Allow other plugins to check change in order items before they are saved.
-	do_action( 'woocommerce_before_save_order_items', $order_id, $items );
+function save_order_items( $order_id, $items ) {
+	// Разрешить другим плагинам проверять изменения в порядке элементов, прежде чем они будут сохранены.
+	do_action( 'before_save_order_items', $order_id, $items );
 
-	// Line items and fees.
+	// Позиции и данные
 	if ( isset( $items['order_item_id'] ) ) {
 		$data_keys = array(
 			'line_tax'             => array(),
@@ -201,14 +169,14 @@ function wc_save_order_items( $order_id, $items ) {
 			'line_subtotal'        => null,
 		);
 		foreach ( $items['order_item_id'] as $item_id ) {
-			if ( ! $item = WC_Order_Factory::get_order_item( absint( $item_id ) ) ) {
+			if ( ! $item = Order_Factory::get_order_item( absint( $item_id ) ) ) {
 				continue;
 			}
 
 			$item_data = array();
 
 			foreach ( $data_keys as $key => $default ) {
-				$item_data[ $key ] = isset( $items[ $key ][ $item_id ] ) ? wc_clean( wp_unslash( $items[ $key ][ $item_id ] ) ) : $default;
+				$item_data[ $key ] = isset( $items[ $key ][ $item_id ] ) ? clean( wp_unslash( $items[ $key ][ $item_id ] ) ) : $default;
 			}
 
 			if ( '0' === $item_data['order_item_qty'] ) {
@@ -253,7 +221,7 @@ function wc_save_order_items( $order_id, $items ) {
 		}
 	}
 
-	// Shipping Rows
+	// Отправка строк
 	if ( isset( $items['shipping_method_id'] ) ) {
 		$data_keys = array(
 			'shipping_method'       => null,
@@ -263,14 +231,14 @@ function wc_save_order_items( $order_id, $items ) {
 		);
 
 		foreach ( $items['shipping_method_id'] as $item_id ) {
-			if ( ! $item = WC_Order_Factory::get_order_item( absint( $item_id ) ) ) {
+			if ( ! $item = Order_Factory::get_order_item( absint( $item_id ) ) ) {
 				continue;
 			}
 
 			$item_data = array();
 
 			foreach ( $data_keys as $key => $default ) {
-				$item_data[ $key ] = isset( $items[ $key ][ $item_id ] ) ? wc_clean( wp_unslash( $items[ $key ][ $item_id ] ) ) : $default;
+				$item_data[ $key ] = isset( $items[ $key ][ $item_id ] ) ? clean( wp_unslash( $items[ $key ][ $item_id ] ) ) : $default;
 			}
 
 			$item->set_props( array(
@@ -302,29 +270,25 @@ function wc_save_order_items( $order_id, $items ) {
 		}
 	}
 
-	$order = wc_get_order( $order_id );
+	$order = get_order( $order_id );
 	$order->update_taxes();
 	$order->calculate_totals( false );
 
-	// Inform other plugins that the items have been saved
-	do_action( 'woocommerce_saved_order_items', $order_id, $items );
+	// Сообщить другим плагинам, что элементы были сохранены
+	do_action( 'saved_order_items', $order_id, $items );
 }
 
-/**
- * Get HTML for some action buttons. Used in list tables.
- *
- * @since 3.3.0
- * @param array $actions Actions to output.
- * @return string
+/*
+  Получение HTML для некоторых кнопок. Используется в таблицах.
  */
-function wc_render_action_buttons( $actions ) {
+function render_action_buttons( $actions ) {
 	$actions_html = '';
 
 	foreach ( $actions as $action ) {
 		if ( isset( $action['group'] ) ) {
-			$actions_html .= '<div class="wc-action-button-group"><label>' . $action['group'] . '</label> <span class="wc-action-button-group__items">' . wc_render_action_buttons( $action['actions'] ) . '</span></div>';
+			$actions_html .= '<div class="action-button-group"><label>' . $action['group'] . '</label> <span class="action-button-group__items">' . render_action_buttons( $action['actions'] ) . '</span></div>';
 		} elseif ( isset( $action['action'], $action['url'], $action['name'] ) ) {
-			$actions_html .= sprintf( '<a class="button wc-action-button wc-action-button-%1$s %1$s" href="%2$s" aria-label="%3$s" title="%3$s">%4$s</a>', esc_attr( $action['action'] ), esc_url( $action['url'] ), esc_attr( isset( $action['title'] ) ? $action['title'] : $action['name'] ), esc_html( $action['name'] ) );
+			$actions_html .= sprintf( '<a class="button action-button action-button-%1$s %1$s" href="%2$s" aria-label="%3$s" title="%3$s">%4$s</a>', esc_attr( $action['action'] ), esc_url( $action['url'] ), esc_attr( isset( $action['title'] ) ? $action['title'] : $action['name'] ), esc_html( $action['name'] ) );
 		}
 	}
 
