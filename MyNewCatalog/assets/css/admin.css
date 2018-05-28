@@ -1,0 +1,620 @@
+
+/**
+ *
+ * Стили для страниц плагина в панели администратора
+ */
+
+@import 'mixins';
+@import 'variables';
+@import 'animation';
+@import 'fonts';
+
+
+.wc_addons_wrap {
+	max-width: 1200px;
+
+	h1.search-form-title {
+		clear: left;
+		padding: 0;
+	}
+
+	form.search-form {
+		clear: both;
+		display: block;
+		position: relative;
+		margin-top: 1em;
+		margin-bottom: 1em;
+
+		input {
+			border: 1px solid #ddd;
+			box-shadow: none;
+			height: 53px;
+			padding-left: 50px;
+			width: 100%;
+			margin: 0;
+		}
+
+		button {
+			background: none;
+			border: none;
+			cursor: pointer;
+			height: 53px;
+			position: absolute;
+			width: 53px;
+		}
+	}
+
+	.update-plugins .update-count  {
+		background-color: #d54e21;
+		border-radius: 10px;
+		color: #fff;
+		display: inline-block;
+		font-size: 9px;
+		font-weight: 600;
+		line-height: 17px;
+		margin: 1px 0 0 2px;
+		padding: 0 6px;
+		vertical-align: text-top;
+	}
+
+	.addons-featured {
+		margin: 0;
+	}
+
+	ul.subsubsub.subsubsub {
+		margin: -2px 0 12px;
+	}
+
+	.subsubsub li::after {
+		content: '|';
+	}
+
+	.subsubsub li:last-child::after {
+		content: '';
+	}
+
+	
+
+	.addons-banner-block-item-icon {
+		background: #f7f7f7;
+		height: 143px;
+	}
+
+	
+	.storefront {
+		background: url('../images/storefront-bg.jpg') bottom right #f6f6f6;
+		border: 1px solid #ddd;
+		margin-top: 1em;
+		padding: 20px;
+		overflow: hidden;
+		zoom: 1;
+
+		img {
+			width: 278px;
+			height: auto;
+			float: left;
+			margin: 0 20px 0 0;
+			box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		p {
+			max-width: 750px;
+		}
+	}
+}
+
+.clear {
+	clear: both;
+}
+
+.wrap.updated,
+.wrap.error {
+	margin-top: 10px;
+}
+
+mark.amount {
+	background: transparent none;
+	color: inherit;
+}
+
+.simplify-commerce-banner {
+	overflow: hidden;
+
+	img {
+		float: right;
+		padding: 15px 0;
+		margin-left: 1em;
+		width: 200px;
+	}
+}
+
+
+table.wc_status_table {
+	margin-bottom: 1em;
+
+	h2 {
+		font-size: 14px;
+		margin: 0;
+	}
+
+	tr:nth-child( 2n ) {
+		th,
+		td {
+			background: #fcfcfc;
+		}
+	}
+
+	th {
+		font-weight: 700;
+		padding: 9px;
+	}
+
+	td:first-child {
+		width: 33%;
+	}
+
+	td.help {
+		width: 1em;
+	}
+
+	td, th {
+		font-size: 1.1em;
+		font-weight: normal;
+
+		&.run-tool {
+			text-align:right;
+		}
+
+		strong.name {
+			display: block;
+			margin-bottom: .5em;
+		}
+
+		mark {
+			background: transparent none;
+		}
+
+		mark.yes {
+			color: $green;
+		}
+
+		mark.no {
+			color: #999;
+		}
+
+		mark.error, .red {
+			color: $red;
+		}
+
+		ul {
+			margin: 0;
+		}
+	}
+
+	.help_tip {
+		cursor: help;
+	}
+}
+
+table.wc_status_table--tools {
+	td, th {
+		padding: 2em;
+	}
+}
+
+
+
+
+.wp-list-table.logs {
+
+	.log-level {
+		display: inline;
+		padding: .2em .6em .3em;
+		font-size: 80%;
+		font-weight: bold;
+		line-height: 1;
+		color: #fff;
+		text-align: center;
+		white-space: nowrap;
+		vertical-align: baseline;
+		border-radius: .2em;
+
+		&:empty {
+			display: none;
+		}
+	}
+
+	
+	.text {
+		box-sizing: border-box;
+		width: 99%;
+		float: left;
+		margin: 1px 1% 1px 1px;
+	}
+
+	.length, .width, .height {
+		width: 32.33%;
+	}
+
+	.height {
+		margin-right: 0;
+	}
+}
+
+
+	.inline-edit-group {
+		label {
+			clear: none;
+			width: 49%;
+			margin: 0.2em 0;
+		}
+		&.dimensions label {
+			width: 75%;
+			max-width: 75%;
+		}
+	}
+
+	.regular_price,
+	.sale_price,
+	.weight,
+	.stock,
+	.length {
+		box-sizing: border-box;
+		width: 100%;
+		margin-left: 4.4em;
+	}
+
+	.length,
+	.width,
+	.height {
+		box-sizing: border-box;
+		width: 25%;
+	}
+}
+
+
+
+.button.wc-reload {
+	@include ir();
+	padding: 0;
+	height: 28px;
+	width: 28px !important;
+	display: inline-block;
+
+	&::after {
+		@include icon_dashicons( '\f345' );
+		line-height: 28px;
+	}
+}
+
+#order_data {
+	padding: 23px 24px 12px;
+
+	h2 {
+		margin: 0;
+		font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', sans-serif;
+		font-size: 21px;
+		font-weight: normal;
+		line-height: 1.2;
+		text-shadow: 1px 1px 1px white;
+		padding: 0;
+	}
+
+	h3 {
+		font-size: 14px;
+	}
+
+	h3, h4 {
+		color: #333;
+		margin: 1.33em 0 0;
+	}
+
+	p {
+		color: #777;
+	}
+
+	p.order_number {
+		margin: 0;
+		font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', sans-serif;
+		font-weight: normal;
+		line-height: 1.6em;
+		font-size: 16px;
+	}
+
+	.order_data_column_container {
+		clear: both;
+	}
+
+	.order_data_column {
+		width: 32%;
+		padding: 0 2% 0 0;
+		float: left;
+
+		> h3 span {
+			display: block;
+		}
+
+		&:last-child {
+			padding-right: 0;
+		}
+
+		p {
+			padding: 0 !important;
+		}
+
+		.address strong {
+			display: block;
+		}
+
+		.form-field {
+			float: left;
+			clear: left;
+			width: 48%;
+			padding: 0;
+			margin: 9px 0 0;
+
+			label {
+				display: block;
+				padding: 0 0 3px;
+			}
+
+			input,
+			textarea {
+				width: 100%;
+			}
+
+			select {
+				width: 100%;
+			}
+
+			.select2-container {
+				width: 100% !important;
+			}
+
+			.date-picker {
+				width: 50%;
+			}
+
+			.hour,
+			.minute {
+				width: 3.5em;
+			}
+
+			small {
+				display: block;
+				margin: 5px 0 0;
+				color: #999;
+			}
+		}
+
+.order_actions {
+	margin: 0;
+	overflow: hidden;
+	zoom: 1;
+
+	li {
+		border-top: 1px solid #fff;
+		border-bottom: 1px solid #ddd;
+		padding: 6px 0;
+		margin: 0;
+		line-height: 1.6em;
+		float: left;
+		width: 50%;
+		text-align: center;
+
+		a {
+			float: none;
+			text-align: center;
+			text-decoration: underline;
+		}
+
+		&.wide {
+			width: auto;
+			float: none;
+			clear: both;
+			padding: 6px;
+			text-align: left;
+			overflow: hidden;
+		}
+
+		
+
+		.save_order {
+			float: right;
+		}
+
+		&#actions {
+			overflow: hidden;
+
+			.button {
+				width: 24px;
+				box-sizing: border-box;
+				float: right;
+			}
+
+			select {
+				width: 225px;
+				box-sizing: border-box;
+				float: left;
+			}
+		}
+	}
+}
+
+#woocommerce-order-items {
+	.inside {
+		margin: 0;
+		padding: 0;
+		background: #fefefe;
+	}
+
+	.wc-order-data-row {
+		border-bottom: 1px solid #dfdfdf;
+		padding: 1.5em 2em;
+		background: #f8f8f8;
+		@include clearfix();
+		line-height: 2em;
+		text-align: right;
+
+		p {
+			margin: 0;
+			line-height: 2em;
+		}
+
+		.wc-used-coupons {
+			text-align: left;
+
+			.tips {
+				display: inline-block;
+			}
+		}
+	}
+
+	.wc-used-coupons {
+		float: left;
+		width: 50%;
+	}
+
+	.wc-order-totals {
+		float: right;
+		width: 50%;
+		margin: 0;
+		padding: 0;
+		text-align: right;
+
+		.amount {
+			font-weight: 700;
+		}
+
+		.label {
+			vertical-align: top;
+		}
+
+		.total {
+			font-size: 1em !important;
+			width: 10em;
+			margin: 0 0 0 0.5em;
+			box-sizing: border-box;
+
+			input[type='text'] {
+				width: 96%;
+				float: right;
+			}
+		}
+
+		.refunded-total {
+			color: $red;
+		}
+	}
+
+	.refund-actions {
+		margin-top: 5px;
+		padding-top: 12px;
+		border-top: 1px solid #dfdfdf;
+
+		.button {
+			float: right;
+			margin-left: 4px;
+		}
+
+		.cancel-action {
+			float: left;
+			margin-left: 0;
+		}
+	}
+
+	.wc-order-item-bulk-edit .cancel-action {
+		float: left;
+		margin-left: 0;
+	}
+
+	.add_meta {
+		margin-left: 0 !important;
+	}
+
+	h3 small {
+		color: #999;
+	}
+
+	.amount {
+		white-space: nowrap;
+	}
+
+	.add-items {
+		.description {
+			margin-right: 10px;
+		}
+		.button {
+			float: left;
+			margin-right: 0.25em;
+		}
+		.button-primary {
+			float: none;
+			margin-right: 0;
+		}
+	}
+}
+
+
+.
+
+
+.form-row {
+	label {
+		display: inline-block;
+	}
+	select {
+		height: 30px;
+		line-height: 30px;
+	}
+
+	&.dimensions_field {
+		.wrap {
+			clear:left;
+			display: block;
+		}
+		input {
+			width: 33%;
+			float: left;
+			vertical-align: middle;
+
+			&:last-of-type {
+				margin-right: 0;
+				width: 34%;
+			}
+		}
+	}
+
+	&.form-row-first,
+	&.form-row-last {
+		width: 48%;
+		float: right;
+	}
+
+	&.form-row-first {
+		clear: both;
+		float: left;
+	}
+
+	&.form-row-full {
+		clear: both;
+	}
+}
+
+
+/*rtl:raw:
+#tiptip_arrow {
+	right: 50%;
+	margin-right: -6px;
+}
+*/
+
+
+img.ui-datepicker-trigger {
+	vertical-align: middle;
+	margin-top: -1px;
+	cursor: pointer;
+}
+
+
+ 
